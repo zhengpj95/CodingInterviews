@@ -50,6 +50,46 @@ var exist = function (board, word) {
 	return false;
 };
 
+
+/**
+ * @param {character[][]} board
+ * @param {string} word
+ * @return {boolean}
+ */
+var exist2 = function (board, word) {
+	let rows = board.length;
+	let cols = board[0] && board[0].length ? board[0].length : 0;
+
+	let backtrace = (row, col, idx) => {
+		// found
+		if (idx >= word.length) {
+			return true;
+		}
+		// out of range, next string not match
+		if (row < 0 || row > rows - 1 || col < 0 || col > cols - 1 || word[idx] != board[row][col]) {
+			return false;
+		}
+
+		let temp = board[row][col];
+		board[row][col] = "";
+		let res = backtrace(row + 1, col, idx + 1) || backtrace(row, col + 1, idx + 1) || backtrace(row, col - 1, idx + 1) || backtrace(row - 1, col, idx + 1);
+		board[row][col] = temp;
+		return res;
+	};
+
+	for (let i = 0; i < rows; i++) {
+		for (let j = 0; j < cols; j++) {
+			if (board[i][j] != word[0]) continue;
+			if (backtrace(i, j, 0)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+};
+
+
 let board = [
 	["F", "Y", "C", "E", "N", "R", "D"],
 	["K", "L", "N", "F", "I", "N", "U"],
